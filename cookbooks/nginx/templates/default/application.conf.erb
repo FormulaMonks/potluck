@@ -1,0 +1,42 @@
+upstream app {
+  server unix:/var/unicorn/<%= @node[:app][:application] %>.sock;
+}
+
+server {
+  listen 80;
+  server_name <%= @node[:app][:uri] %>;
+  
+  access_log <%= @node[:nginx][:log_dir] %>/<%= @node[:app][:uri] %>.log;
+  error_log <%= @node[:nginx][:log_dir] %>/<%= @node[:app][:uri] %>-error.log;
+  
+  root   /srv/<%= @node[:app][:application] %>/current/public/;
+  index  index.html;
+  
+  location / {
+    <% if @node[:app][:basic_auth] && @node[:app][:basic_auth][:username] && @node[:app][:basic_auth][:password] %>
+    auth_basic            "Restricted";
+    auth_basic_user_file  /srv/<%= @node[:app][:application] %>/shared/config/htpasswd;
+    <% end %>
+
+    proxy_set_header  X-Real-IP  $remote_addr;
+    proxy_set_header  X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header Host $http_host;
+    proxy_redirect off;
+
+    if (-f $request_filename/index.html) {
+      rewrite (.*) $1/index.html break;
+    }
+    
+    if (-f $request_filename.html) {
+      rewrite (.*) $1.html break;
+    }
+
+    if (!-f $request_filename) {
+      proxy_pass http://app;
+      break;
+    }
+  
+  } 
+    
+}
+

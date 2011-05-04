@@ -1,0 +1,10 @@
+load 'deploy' if respond_to?(:namespace) # cap2 differentiator
+Dir['vendor/plugins/*/recipes/*.rb'].each { |plugin| load(plugin) }
+Dir['vendor/gems/*/recipes/*.rb'].each { |plugin| load(plugin) }
+
+load "deploy/recipes/globals"
+load "deploy/recipes/environments"
+load "deploy/recipes/provision"
+load "deploy/recipes/deploy"
+
+Dir["deploy/recipes/lib/*.rb"].each { |plugin| load(plugin) }

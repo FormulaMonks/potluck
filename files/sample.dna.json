@@ -1,0 +1,28 @@
+{
+  "app": {
+    "ruby_version": "ruby-1.9.2",
+    "environment" : "production",
+    "application" : "my_app",
+    "uri"         : "my_app.com",
+    "rails"       : false,
+    "user"        : "administrator username (i.e. admin, steve, etc...)",
+    "basic_auth" : {
+      "username" : "your basic auth username",
+      "password" : "your basic auth password"
+    },
+    "db" : {
+      "name"      : "my_app_production",
+      "password"  : "your crazy unguessable database password"
+    }
+  },
+  "recipes": [
+    "apt",
+    "server",
+    "ruby192",
+    "logrotate",
+    "unicorn",
+    "nginx",
+    "redis",
+    "site"
+  ]
+}

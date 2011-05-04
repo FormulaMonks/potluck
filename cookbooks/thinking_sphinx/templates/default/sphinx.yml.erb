@@ -1,0 +1,9 @@
+<%= @node[:app][:environment] %>:
+  searchd_log_file: /var/log/sphinx/searchd.log
+  query_log_file: /var/log/sphinx/query.log
+  pid_file: /var/run/sphinx/sphinx.pid
+  address: localhost
+  port: 3312
+  mem_limit: 32
+  config_file: /srv/<%= @node[:app][:application] %>/current/config/<%= @node[:app][:environment] %>.sphinx.conf
+  searchd_file_path: /var/log/sphinx/indexes

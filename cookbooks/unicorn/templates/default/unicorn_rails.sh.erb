@@ -1,0 +1,60 @@
+#!/bin/sh
+set -u
+set -e
+# Example init script, this can be used with nginx, too,
+# since nginx and unicorn accept the same signals
+#
+# May be subject to license here:
+# https://github.com/defunkt/unicorn/blob/master/LICENSE
+#
+
+# Feel free to change any of the following variables for your app:
+APP_ROOT=/srv/<%= @node[:app][:application] %>/current/
+PID=/var/run/<%= @node[:app][:application] %>.pid
+ENV=<%= @node[:app][:environment] %>
+CMD="/usr/bin/unicorn_rails -c config/unicorn.rb -D -E $ENV"
+
+old_pid="$PID.oldbin"
+
+cd $APP_ROOT || exit 1
+
+sig () {
+	test -s "$PID" && kill -$1 `cat $PID`
+}
+
+oldsig () {
+	test -s $old_pid && kill -$1 `cat $old_pid`
+}
+
+case $1 in
+start)
+	sig 0 && echo >&2 "Already running" && exit 0
+	$CMD
+	;;
+stop)
+	sig QUIT && exit 0
+	echo >&2 "Not running"
+	;;
+force-stop)
+	sig TERM && exit 0
+	echo >&2 "Not running"
+	;;
+restart|reload)
+	sig HUP && echo reloaded OK && exit 0
+	echo >&2 "Couldn't reload, starting '$CMD' instead"
+	$CMD
+	;;
+upgrade)
+	sig USR2 && exit 0
+	echo >&2 "Couldn't upgrade, starting '$CMD' instead"
+	$CMD
+	;;
+rotate)
+        sig USR1 && echo rotated logs OK && exit 0
+        echo >&2 "Couldn't rotate logs" && exit 1
+        ;;
+*)
+	echo >&2 "Usage: $0 <start|stop|restart|upgrade|rotate|force-stop>"
+	exit 1
+	;;
+esac

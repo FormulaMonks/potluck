@@ -1,0 +1,4 @@
+recipes/deploy_private.rb
+files/staging.dna.json
+files/production.dna.json
+files/cookbooks.tar.gz
