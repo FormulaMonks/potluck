@@ -52,8 +52,9 @@ License(s)
 ==========
 
 This software consists of multiple pieces of bundled software, some of which
-contain a separate but compatible license from the license below. Unless
-otherwise noted, the license below applies to all components contained within.
+contain a separate license from the license below. For components with existing
+licenses, their existing license applies. For the remainder, the license below
+applies.
 
 Copyright (c) 2009, 2010, 2011 Ben Alavi & Tim Goh
 
