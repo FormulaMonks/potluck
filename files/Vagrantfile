@@ -10,7 +10,7 @@ Vagrant::Config.run do |config|
   config.vm.network("33.33.33.10")
   # config.vm.forward_port("http", 80, 4282)
   config.vm.share_folder("v-root", "/srv/#{@application}/current", ".", :nfs => true)
-  config.vm.boot_mode = :gui
+  # config.vm.boot_mode = :gui
   
   config.vm.provision :chef_solo do |chef|
     chef.cookbooks_path = "deploy/cookbooks"

@@ -30,10 +30,11 @@ task :staging do
   role :web, "my_app-staging"
 end
 
+# TODO: read application name and IP from Vagrantfile
 task :development do
-  set :application, "my_app"
+  set :application, "my_app" # this should match the name of your app in your Vagrantfile
   set :user,        "vagrant"
   set :deploy_to,   "/srv/#{application}"
 
-  role :app, "33.33.33.10"
+  role :app, "33.33.33.10" # this should match the IP given to config.vm.network(...) in your Vagrantfile
 end
