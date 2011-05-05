@@ -39,30 +39,30 @@ Managing your Vagrantfile
 
 Within your `Vagrantfile` the things you'll probably want to change are:
 
-* The name of your application (which will be the root folder of your project
+The name of your application (which will be the root folder of your project
 inside of your VM):
 
     @application = "my_app" => @application => "billion_dollar_startup"
 
-* If you find your running multiple VMs at the same time, you probably will
+If you find your running multiple VMs at the same time, you probably will
 want them on separate IPs so they don't collide with one another.
 
     config.vm.network("33.33.33.10") => config.vm.network("33.33.33.123")
 
-* If you want other people on your local network to be able to get to your VM,
+If you want other people on your local network to be able to get to your VM,
 you will probably want to uncomment the port forwarding line. Doing so will
 allow people on your local network to hit port 80 on your VM via port 4282 on
 your host IP (i.e. `192.168.1.123:4282`):
 
     config.vm.forward_port("http", 80, 4282)
 
-* If you're going to be using Selenium for testing you will likely want to run
+If you're going to be using Selenium for testing you will likely want to run
 your VM with a gui so you can see what's going on and debug. To do so,
 uncomment the boot_mode line:
 
     config.vm.boot_mode = :gui
 
-* Finally, check the cookbook names in the `chef.run_list` array. Each recipe
+Finally, check the cookbook names in the `chef.run_list` array. Each recipe
 corresponds to the name of a cookbook in the `deploy/cookbooks` folder. The
 default `run_list` looks like:
 
@@ -77,7 +77,7 @@ default `run_list` looks like:
       recipe[site]
     )
 
-* ...to add Selenium to this list, you can just add it to the `run_list`:
+...to add Selenium to this list, you can just add it to the `run_list`:
 
     chef.run_list = %w(
       recipe[apt]
@@ -89,7 +89,7 @@ default `run_list` looks like:
       recipe[redis]
       recipe[selenium]
       recipe[site]
-    )
+    ) # added selenium above site!
 
 _NOTE_: You can change these at any time. Changes to the `run_list` or to the
 actual recipes themselves can be updated by running:
