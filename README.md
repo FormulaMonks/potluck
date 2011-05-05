@@ -46,7 +46,8 @@ Deploying
 Contributors
 ============
 
-Mitchell Hashimoto: original Vagrantfile
+Mitchell Hashimoto
+Chris Schneider
 
 License(s)
 ==========
