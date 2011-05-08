@@ -159,10 +159,10 @@ Contributors
 License(s)
 ==========
 
-This software consists of multiple pieces of bundled software, some of which
-contain a separate license from the license below. For components with existing
-licenses, their existing license applies. For the remainder, the license below
-applies.
+These files contain multiple components of bundled software, and some of those
+components are governed by an Apache license included in their respective
+files. That license can be found at
+http://www.apache.org/licenses/LICENSE-2.0.html
 
 Copyright (c) 2009, 2010, 2011 Ben Alavi & Tim Goh
 
