@@ -27,7 +27,7 @@ execute "apt-get update" do
 end
 
 # Selenium Webdriver requires Chrome 12+
-package "google-chrome-unstable"
+package "google-chrome-beta"
 
 script "install_chromedriver" do
   not_if "test -e /usr/local/bin/chromedriver"
