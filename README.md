@@ -139,10 +139,64 @@ Provisioning
 You can provision your servers with the same cookbooks you've used to provision
 your VM. You need to set up a few things first:
 
+_TODO: fill in info about `sample.dna.json`, `production.dna.json`,
+`environments.rb`, etc..._
+
+Once you are set up you can run:
+
+    $ cap production provision:all
+    
+To get things started. This will install a minimal amount of things to get chef
+up and running, and then continue the provisioning process using your chef
+scripts.
+
+Eventually it will prompt you for a Hostname & FQDN, we typically use the
+application name and intended vhost, i.e.:
+
+    $ Hostname: billion_dollar_startup
+    $ FQDN: billiondollarstartup.com
+    
+Shortly after it will reboot in order to refresh the Hostname and FQDN, then
+pick back up w/ chef provisioning. If chef provisioning fails, you can start it
+again using:
+
+    $ cap production provision:chef:all
+  
+Likewise, when you make changes to your VM and want to reflect the same changes
+on your server, you can:
+
+    $ cap production provision:chef:all
+
+`production` above corresponds to the name of the environment you're
+provisioning. `environments.rb` includes `production` and `staging` but you
+could have any number of environments.
+
 Deploying
 ---------
 
+_TODO: deployment setup, deploy keys, etc..._
 
+    $ cap production deploy
+    
+Managing
+--------
+
+    $ cap -T
+
+    $ cap production unicorn:stop
+    $ cap production unicorn:start
+    $ cap production unicorn:restart
+    
+    $ cap production nginx:restart
+
+Troubleshooting
+---------------
+
+    $ cap production unicorn:tail:stderr
+    $ cap production unicorn:tail:stdout
+    
+    $ cap production nginx:tail:error
+    $ cap production nginx:tail:access
 
 Todo
 ====
