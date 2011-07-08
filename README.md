@@ -3,6 +3,28 @@ Potluck
 
 Citrusbyte server provisioning + deployment repository
 
+Potluck is a collection of Chef cookbooks & Capistrano recipes we use at
+Citrusbyte primarily for provisioning and managing development environments
+within virtual machines managed w/ Vagrant.
+
+The same Chef recipes can then be used to provision remote servers (such as on
+EC2, Slicehost, Linode, etc...) in the same fashion as our development
+environments. This allows us to do a lot of nice things:
+
+* Keeps our server setup managed in the same version control repository as our
+application code.
+* Makes it easy for new developers to pick up and start developing with the
+same environment as everybody else.
+* Minimizes discrepencies between our local settings and our staging/production
+environment settings.
+* Keeps our host machines clean of random gems and required packages.
+* Allows us to script setup of development dependencies (i.e. fetching &
+compiling 3rd-party libraries and their dependencies).
+* Store, share and re-use server configuration (i.e. nginx configs, logrotate
+settings, etc...)
+* Automate setup steps that are typically relegated to a README.
+* And more stuff I can't think of right now...
+
 Usage
 =====
 
