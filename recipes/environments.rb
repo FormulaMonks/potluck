@@ -8,6 +8,7 @@ task :production do
   set :rails_env,   "production"
   set :rack_env,    "production"
   set :deploy_to,   "/srv/#{application}"
+  set :user,        "admin" # this should match the username in production.dna.json
   
   role :app, "my_app"
   role :db,  "my_app", :primary => true
@@ -24,6 +25,7 @@ task :staging do
   set :rails_env,   "production"
   set :rack_env,    "production"
   set :deploy_to,   "/srv/#{application}"
+  set :user,        "admin" # this should match the username in staging.dna.json
   
   role :app, "my_app-staging"
   role :db,  "my_app-staging", :primary => true
