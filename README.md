@@ -198,8 +198,47 @@ Deploying
 
 _TODO: deployment setup, deploy keys, etc..._
 
+Set the password for the main user:
+
+    $ ssh root@<production box>
+    $ passwd admin
+    
+_Assuming you named your deploy user admin (the default)_
+
+Read `~/.ssh/id_rsa.pub` on your host machine and put it into
+`~/.ssh/authorized_keys` on the remote server so you don't have to enter a
+password for the main user every time.
+
+    $ cap production deploy:auth
+
+The `server` chef recipe generates a deploy key for you on the server in
+`~/.ssh/id_rsa.pub` -- you can run the following cap command to print it out,
+then you can give it read access to your source repository for deployments (or
+add it as a deploy key on github)
+
+    $ cap production deploy:key
+
+...Finally
+
     $ cap production deploy
     
+...also...
+
+    $ cap production deploy:long
+    
+If you see something like:
+
+    ...
+    ** [aircheck :: err] Host key verification failed.
+    ** [aircheck :: err] fatal: The remote end hung up unexpectedly
+    ...
+
+Then you need to ssh in and do:
+
+    $ cd ~ && git clone <your repo>.git
+
+Which will prompt you if you want to connect, to which you should respond `yes`
+
 Managing
 --------
 

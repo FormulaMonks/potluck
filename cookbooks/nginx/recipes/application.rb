@@ -43,10 +43,10 @@ end
 if node[:app][:basic_auth] && node[:app][:basic_auth][:username] && node[:app][:basic_auth][:password]  
   htpasswd = "/srv/#{node[:app][:application]}/shared/config/htpasswd"
   
-  file htpasswd do    
-    owner "www-data"
-    group "root"
-    mode 0600
+  file htpasswd do
+    owner node[:app][:user]
+    group "www-data"
+    mode 0640
   end
   
   ruby_block "generate_htpasswd" do
