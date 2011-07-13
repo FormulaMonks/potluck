@@ -1,5 +1,5 @@
 namespace :srv do
-  desc "Give uptime info for each slice"
+  desc "Give uptime status"
   task :uptime, :roles => :app do
     run "uptime" do |channel, stream, data|
       puts "#{channel[:server]}: #{data}"
@@ -7,7 +7,7 @@ namespace :srv do
     end
   end
 
-  desc "Give free memory info for each slice"
+  desc "Give free memory status"
   task :free, :roles => :app do
     free = {}
     roles[:app].each{ |role| free[role.port] = '' }

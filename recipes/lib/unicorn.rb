@@ -2,6 +2,7 @@ before "unicorn:restart", "unicorn:ensure_setup"
 before "unicorn:start",   "unicorn:ensure_setup"
 
 namespace :unicorn do
+  desc "Symlink unicorn config"
   task :ensure_setup, :role => :app do
     run "ln -nfs #{shared_path}/config/unicorn.rb #{current_path}/config/unicorn.rb"
   end

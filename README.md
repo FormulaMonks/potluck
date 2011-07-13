@@ -25,6 +25,14 @@ settings, etc...)
 * Automate setup steps that are typically relegated to a README.
 * And more stuff I can't think of right now...
 
+Note that the server provisioning scripts contained here are for very simple
+server setups. They are primarily useful for small applications, experiments,
+prototypes, staging environments, or alpha launches. While they have some of
+the configuration of a small production environment (iptables rules, log
+rotation, etc...), they are not intended for critical deployments. That said,
+we try to keep them stable, and have had boxes managed by these cookbooks
+chugging along for long periods.
+
 Usage
 =====
 
@@ -41,6 +49,9 @@ Then you should:
 
 And maintain changes to the base provisioning/deployment repository within your
 own code-base.
+
+Developing with Vagrant
+=======================
 
 Getting started
 ---------------
@@ -64,7 +75,7 @@ Within your `Vagrantfile` the things you'll probably want to change are:
 The name of your application (which will be the root folder of your project
 inside of your VM):
 
-    @application = "my_app" => @application => "billion_dollar_startup"
+    @application = "my_app" => @application = "billion_dollar_startup"
 
 If you find your running multiple VMs at the same time, you probably will
 want them on separate IPs so they don't collide with one another.
@@ -125,6 +136,10 @@ actual recipes themselves can be updated by running:
     
 See http://www.vagrantup.com/ for more info on using Vagrant.
 
+_NOTE: Make sure to add `.vagrant` to your root `.gitignore` if you are using
+git. This file is unique to the host machine and if it gets overwritten you
+will have to rebuild your VM._
+
 Controlling with Capistrano
 ---------------------------
 
@@ -132,37 +147,59 @@ You can use capistrano scripts to control your VM in the same way you control
 your remote server (remember that you don't need to deploy to your VM thanks to
 the NFS between your host and your VM).
 
-To get started with capistrano, edit the file `deploy/recipes/environments.rb`
-and properly set up your `development` environment by changing this:
+To start/stop your application w/ shotgun (requires shotgun gem)
 
-    task :development do
-      set :application, "my_app"
-      set :user,        "vagrant"
-      set :deploy_to,   "/srv/#{application}"
+    $ cap development shotgun:start
+    $ cap development shotgun:stop
+    
+Likewise for rackup (requires a config.ru)
 
-      role :app, "33.33.33.10"
-    end
+    $ cap development rack:start
+    $ cap development rack:stop
+    
+And, since your VM is configured similarly to your production servers, you can
+also use the commands listed below under managing your production servers (i.e.
+for unicorn, nginx, log tails, etc...).
 
-To something like this (note that it matches the names of things in your
-Vagrantfile):
+_See `recipes/environments.rb` if you have trouble running commands against
+your development environment._
 
-    task :development do
-      set :application, "billion_dollar_startup"
-      set :user,        "vagrant"
-      set :deploy_to,   "/srv/#{application}"
+Provisioning & Deployment
+=========================
 
-      role :app, "33.33.33.123"
-    end
+_NOTE: the instructions below assume you're deploying to the `production`
+environment (as specified in `recipes/environment.rb`). If you're deploying to
+a different environment, replace `production` with your environment name._
 
-
-Provisioning
-------------
+Server provisioning
+-------------------
 
 You can provision your servers with the same cookbooks you've used to provision
-your VM. You need to set up a few things first:
+your VM.
 
-_TODO: fill in info about `sample.dna.json`, `production.dna.json`,
-`environments.rb`, etc..._
+You need to set up a couple things first:
+
+_`environments.rb`_
+
+`recipes/environments.rb` tells Capistrano about each of your server
+environments. We use it to manage our servers for `production`, `staging`, and
+any other environments we may be running. Before provisioning or deploying a
+server, setup your appropriate environment according to the documentation in
+the `recipes/environments.rb` file.
+
+_`<environment>.dna.json`_
+  
+The `files/<environment>.dna.json` file is the server-side analogy to your
+Vagrantfile. It contains environment-specific configuration to be read by chef
+when provisioning your server. There is a sample file in
+`files/sample.dna.json` which you need to copy for each environment you wish to
+provision (i.e. `production.dna.json`). Once you have it copied, set it up
+according to the contents of the file.
+
+_NOTE: the `.gitignore` included with this repository ignores
+`staging.dna.json` and `production.dna.json`. It is recommended that you leave
+your environment-specific configuration files out of version control as they
+typically contain sensitive information._
 
 Once you are set up you can run:
 
@@ -172,12 +209,17 @@ To get things started. This will install a minimal amount of things to get chef
 up and running, and then continue the provisioning process using your chef
 scripts.
 
-Eventually it will prompt you for a Hostname & FQDN, we typically use the
-application name and intended vhost, i.e.:
+Provisioning runs as the `root` user, so you will either need to supply the
+`root` password when prompted, or you will need to be otherwise authorized to
+ssh in as `root` (i.e. by adding your public key into 
+`/root/.ssh/authorized_keys` on your server).
+
+Once running, it will eventually prompt you for a Hostname & FQDN, we typically
+use the application name and primary vhost, i.e.:
 
     $ Hostname: billion_dollar_startup
     $ FQDN: billiondollarstartup.com
-    
+
 Shortly after it will reboot in order to refresh the Hostname and FQDN, then
 pick back up w/ chef provisioning. If chef provisioning fails, you can start it
 again using:
@@ -189,14 +231,8 @@ on your server, you can:
 
     $ cap production provision:chef:all
 
-`production` above corresponds to the name of the environment you're
-provisioning. `environments.rb` includes `production` and `staging` but you
-could have any number of environments.
-
 Deploying
 ---------
-
-_TODO: deployment setup, deploy keys, etc..._
 
 Set the password for the main user:
 
@@ -207,30 +243,32 @@ _Assuming you named your deploy user admin (the default)_
 
 Read `~/.ssh/id_rsa.pub` on your host machine and put it into
 `~/.ssh/authorized_keys` on the remote server so you don't have to enter a
-password for the main user every time.
+password for the main user every time (it appends, so other people can run this
+to put in their keys as well).
 
     $ cap production deploy:auth
 
 The `server` chef recipe generates a deploy key for you on the server in
 `~/.ssh/id_rsa.pub` -- you can run the following cap command to print it out,
-then you can give it read access to your source repository for deployments (or
-add it as a deploy key on github)
+then you can give it read access to your source repository for deployments (add
+it as a deploy key on github, add it to gitosis, etc...)
 
     $ cap production deploy:key
 
-...Finally
+Finally, you can run a deploy:
 
     $ cap production deploy
-    
-...also...
+
+Or you can run a deploy with shutdown, maintenance page, and run your database
+migrations (see `recipes/deploy.rb` for more detail):
 
     $ cap production deploy:long
-    
+
 If you see something like:
 
     ...
-    ** [aircheck :: err] Host key verification failed.
-    ** [aircheck :: err] fatal: The remote end hung up unexpectedly
+    ** [billion_dollar_startup :: err] Host key verification failed.
+    ** [billion_dollar_startup :: err] fatal: The remote end hung up unexpectedly
     ...
 
 Then you need to ssh in and do:
@@ -239,23 +277,33 @@ Then you need to ssh in and do:
 
 Which will prompt you if you want to connect, to which you should respond `yes`
 
-Managing
---------
+Managing your server
+--------------------
+
+List all available capistrano commands:
 
     $ cap -T
+
+Stop/start/restart unicorn:
 
     $ cap production unicorn:stop
     $ cap production unicorn:start
     $ cap production unicorn:restart
-    
+
+Restart nginx:
+
     $ cap production nginx:restart
 
-Troubleshooting
----------------
+Troubleshooting your server
+---------------------------
+
+Tail unicorn logs:
 
     $ cap production unicorn:tail:stderr
     $ cap production unicorn:tail:stdout
-    
+
+Tail nginx logs:
+
     $ cap production nginx:tail:error
     $ cap production nginx:tail:access
 

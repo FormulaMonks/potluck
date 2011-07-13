@@ -1,5 +1,5 @@
 namespace :db do
-  desc "Dump the remote PostgreSQL database to a file"
+  desc "Dump the remote PostgreSQL database specified in Rails-style database.yml to a file"
   task :dump, :roles => :app do
     config = ""
     run "cat #{current_path}/config/database.yml" do |channel, stream, data|
