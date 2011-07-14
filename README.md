@@ -60,13 +60,17 @@ From your application root:
 
     $ ln -s deploy/files/Vagrantfile
     $ ln -s deploy/files/Capfile
-    
-Assuming you have Vagrant ready to go (if not, see http://www.vagrantup.com/),
-you should verify the recipes + settings in the `Vagrantfile` (see below),
-then:
+
+Set up Vagrant if you haven't done so already (see http://www.vagrantup.com/,
+we typically use the `lucid32.box` available there).
+
+Verify your VM setup in your `Vagrantfile` -- you'll want to at least change
+the `@application` setting! See below for additional info.
+
+Then start up and build your VM with:
 
     $ vagrant up
-    
+
 Managing your Vagrantfile
 -------------------------
 
